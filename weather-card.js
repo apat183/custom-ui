@@ -278,7 +278,7 @@ class WeatherCard extends LitElement {
         ha-card {
           cursor: pointer;
           margin: auto;
-          padding-top: 2.5em;
+          padding-top: 1.3em;
           padding-bottom: 1.3em;
           padding-left: 1em;
           padding-right: 1em;
@@ -312,6 +312,11 @@ class WeatherCard extends LitElement {
           top: 0.3em;
         }
 
+        ul {
+          margin-block-start: 0em !important;
+        }
+      
+
         .tempc {
           font-weight: 300;
           font-size: 1.5em;
@@ -330,7 +335,6 @@ class WeatherCard extends LitElement {
           font-weight: 300;
           color: var(--primary-text-color);
           list-style: none;
-          margin-top: 4.5em;
           padding: 0;
         }
 
@@ -370,6 +374,7 @@ class WeatherCard extends LitElement {
         .flexrow {
           display: flex;
           align-items: center;
+          justify-content: center;
         }
 
         .dayname {
