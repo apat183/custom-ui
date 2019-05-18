@@ -72,7 +72,7 @@ function hasConfigOrEntityChanged(element, changedProps) {
   if (oldHass) {
     return (
       oldHass.states[element._config.entity] !==
-        element.hass.states[element._config.entity] ||
+      element.hass.states[element._config.entity] ||
       oldHass.states["sun.sun"] !== element.hass.states["sun.sun"]
     );
   }
@@ -144,31 +144,6 @@ class WeatherCard extends LitElement {
     return html`
       ${this.renderStyle()}
       <ha-card @click="${this._handleClick}">
-        <span
-          class="icon bigger"
-          style="background: none, url(${
-            this.getWeatherIcon(
-              stateObj.state.toLowerCase(),
-              this.hass.states["sun.sun"].state
-            )
-          }) no-repeat; background-size: contain;"
-          >${stateObj.state}
-        </span>
-        ${
-          this._config.name
-            ? html`
-                <span class="title"> ${this._config.name} </span>
-              `
-            : ""
-        }
-        <span class="temp"
-          >${
-            this.getUnit("temperature") == "°F"
-              ? Math.round(stateObj.attributes.temperature)
-              : stateObj.attributes.temperature
-          }</span
-        >
-        <span class="tempc"> ${this.getUnit("temperature")}</span>
         <span>
           <ul class="variations">
             <li>
@@ -177,36 +152,23 @@ class WeatherCard extends LitElement {
               ></span>
               ${stateObj.attributes.humidity}<span class="unit"> % </span>
               <br />
-              <span class="ha-icon"
-                ><ha-icon icon="mdi:weather-windy"></ha-icon
-              ></span>
-              ${
-                windDirections[
-                  parseInt((stateObj.attributes.wind_bearing + 11.25) / 22.5)
-                ]
-              }
-              ${stateObj.attributes.wind_speed}<span class="unit">
-                ${this.getUnit("length")}/h
-              </span>
-              <br />
+              
               <span class="ha-icon"
                 ><ha-icon icon="mdi:weather-sunset-up"></ha-icon
               ></span>
               ${next_rising.toLocaleTimeString()}
             </li>
             <li>
-              <span class="ha-icon"><ha-icon icon="mdi:gauge"></ha-icon></span
-              >${stateObj.attributes.pressure}<span class="unit">
-                ${this.getUnit("air_pressure")}
-              </span>
-              <br />
-              <span class="ha-icon"
-                ><ha-icon icon="mdi:weather-fog"></ha-icon
-              ></span>
-              ${stateObj.attributes.visibility}<span class="unit">
-                ${this.getUnit("length")}
-              </span>
-              <br />
+            <span class="ha-icon"
+            ><ha-icon icon="mdi:weather-windy"></ha-icon
+          ></span>
+          ${windDirections[
+            parseInt((stateObj.attributes.wind_bearing + 11.25) / 22.5)
+            ]}
+          ${stateObj.attributes.wind_speed}<span class="unit">
+            ${this.getUnit("length")}/h
+          </span>
+          <br />
               <span class="ha-icon"
                 ><ha-icon icon="mdi:weather-sunset-down"></ha-icon
               ></span>
@@ -215,54 +177,63 @@ class WeatherCard extends LitElement {
           </ul>
         </span>
         ${
-          stateObj.attributes.forecast &&
-          stateObj.attributes.forecast.length > 0
-            ? html`
+      stateObj.attributes.forecast &&
+        stateObj.attributes.forecast.length > 0
+        ? html`
                 <div class="forecast clear">
                   ${
-                    stateObj.attributes.forecast.slice(0, 5).map(
-                      daily => html`
+          stateObj.attributes.forecast.slice(0, 5).map(
+            daily => html`
                         <div class="day">
                           <span class="dayname"
                             >${
-                              new Date(daily.datetime).toLocaleDateString(
-                                lang,
-                                {
-                                  weekday: "short"
-                                }
-                              )
-                            }</span
+              new Date(daily.datetime).toLocaleDateString(
+                lang,
+                {
+                  weekday: "short"
+                }
+              )
+              }</span
                           >
                           <br /><i
                             class="icon"
                             style="background: none, url(${
-                              this.getWeatherIcon(daily.condition.toLowerCase())
-                            }) no-repeat; background-size: contain;"
+              this.getWeatherIcon(daily.condition.toLowerCase())
+              }) no-repeat; background-size: contain;"
                           ></i>
-                          <br /><span class="highTemp"
-                            >${daily.temperature}${
-                              this.getUnit("temperature")
-                            }</span
-                          >
+                          <br />
+                          <div class="flexrow">
+                          <span class="highTemp"
+                          >${daily.temperature}${
+            this.getUnit("temperature")
+            }</span>
+                          </div>
+                          <div class="flexrow">
                           ${
                             typeof daily.templow !== 'undefined'
                               ? html`
-                                  <br /><span class="lowTemp"
-                                    >${daily.templow}${
-                                      this.getUnit("temperature")
-                                    }</span
-                                  >
-                                `
+                                                <span class="lowTemp"
+                                                  >${daily.templow}${
+                                this.getUnit("temperature")
+                                }</span
+                                                >
+                                              `
                               : ""
-                          }
+                            }                                    
+                          </div>
+                          <div class="flexrow">
+                          <span class="lowTemp"
+                          >${daily.precipitation}${
+                          this.getUnit("precipitation")
+                          }</span>
                         </div>
                       `
-                    )
-                  }
+          )
+          }
                 </div>
               `
-            : ""
-        }
+        : ""
+      }
       </ha-card>
     `;
   }
@@ -272,11 +243,11 @@ class WeatherCard extends LitElement {
       this._config.icons
         ? this._config.icons
         : "https://cdn.jsdelivr.net/gh/bramkragten/custom-ui@master/weather-card/icons/animated/"
-    }${
+      }${
       sun && sun == "below_horizon"
         ? weatherIconsNight[condition]
         : weatherIconsDay[condition]
-    }.svg`;
+      }.svg`;
   }
 
   getUnit(measure) {
@@ -392,8 +363,13 @@ class WeatherCard extends LitElement {
           text-align: center;
           color: var(--primary-text-color);
           border-right: 0.1em solid #d9d9d9;
-          line-height: 2;
+          line-height: 1.5;
           box-sizing: border-box;
+        }
+
+        .flexrow {
+          display: flex;
+          align-items: center;
         }
 
         .dayname {
